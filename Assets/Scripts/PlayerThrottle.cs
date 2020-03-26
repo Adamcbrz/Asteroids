@@ -18,15 +18,12 @@ public class PlayerThrottle
     {
         if (handler != null)
         {
-            Debug.Log(handler.Move);
             if (handler.Move.y > 0)
             {
-                Debug.Log("Accel");
                 velocity += forward * (handler.Move.y * acceleration * Time.deltaTime);
             }
             else
             {
-                Debug.Log("Drag");
                 velocity *= drag; // ( drag * Time.deltaTime);
             }
         }

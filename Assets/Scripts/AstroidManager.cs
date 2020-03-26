@@ -5,40 +5,19 @@ using Unity.Collections;
 using Unity.Rendering;
 using Unity.Mathematics;
 using Unity.Physics;
-[System.Serializable]
-public struct Range
-{
-    public float min;
-    public float max;
-
-    public float Random()
-    {
-        return UnityEngine.Random.Range(min, max);
-    }
-
-    public override string ToString()
-    {
-        return string.Format("[Range] ({0}, {1})", min, max);
-    }
-}
-
-
-public struct Edges {
-    public Range x;
-    public Range y;
-    public override string ToString()
-    {
-        return string.Format("[Edge] (x: {0}), (y: {1})", x.ToString(), y.ToString());
-    }
-}
+using Collider = Unity.Physics.Collider;
+using MeshCollider = Unity.Physics.MeshCollider;
 
 public class AstroidManager : MonoBehaviour
 {
-    [SerializeField] private Mesh mesh;
-    [SerializeField] private UnityEngine.Material material;
+    [SerializeField] private RenderMesh displayMesh;
     [SerializeField] private int numberOfEntities = 10000;
     [SerializeField] private Range speedRange;
     [SerializeField] private Range rotationSpeedRange;
+    [SerializeField] private float mass = 10;
+    [SerializeField] private float3 linearVelocity;
+    [SerializeField] private float3 angularVelocity;
+
     void Start()
     {
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -51,15 +30,22 @@ public class AstroidManager : MonoBehaviour
             typeof(LocalToWorld),
             typeof(VelocityComponent),
             typeof(RotationSpeedComponent),
-            typeof(Unity.Physics.PhysicsCollider),
-            typeof(Unity.Physics.RigidBody)
+            typeof(PhysicsCollider),
+            typeof(PhysicsVelocity),
+            typeof(PhysicsMass),
+            typeof(PhysicsGravityFactor),
+            typeof(PhysicsDamping)
 
             );
 
+
+        BlobAssetReference<Collider> meshCollider = MeshToCollider(displayMesh.mesh);
+        //Unity.Physics.MeshCollider.Create(new NativeArray<float3>(displayMesh.mesh.vertexCount, ))
         NativeArray<Entity> entityArray = new NativeArray<Entity>(numberOfEntities, Allocator.Temp);
         entityManager.CreateEntity(entityArchetype, entityArray);
         for (int i = 0; i < entityArray.Length; i++)
         {
+
             Entity entity = entityArray[i];
             entityManager.SetComponentData(entity, new VelocityComponent { 
                 velocity = new float3 (speedRange.Random(), speedRange.Random(), 0)
@@ -77,11 +63,41 @@ public class AstroidManager : MonoBehaviour
             Quaternion rot = Quaternion.Euler(rotRange.Random(), rotRange.Random(), rotRange.Random());
             entityManager.SetComponentData(entity, new Translation { Value = new float3(EuclideanTorus.current.xRange.Random(), EuclideanTorus.current.yRange.Random(), 0) });
             entityManager.SetComponentData(entity, new Rotation { Value = (quaternion)rot });
-
-            entityManager.SetSharedComponentData(entity, new RenderMesh { mesh = mesh, material = material });
+            entityManager.SetSharedComponentData(entity, new RenderMesh { mesh = displayMesh.mesh, material = displayMesh.material});
+            entityManager.SetComponentData(entity, new PhysicsCollider { Value = meshCollider});
+            //Collider* colliderPtr = (Collider*)meshCollider.GetUnsafePtr();
+            //entityManager.SetComponentData(entity, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, mass));
+            //float3 angularVelocityLocal = math.mul(math.inverse(colliderPtr->MassProperties.MassDistribution.Transform.rot), angularVelocity);
+            entityManager.SetComponentData(entity, new PhysicsVelocity()
+            {
+                Linear = linearVelocity,
+                Angular = angularVelocity
+            });
+            entityManager.SetComponentData(entity, new PhysicsDamping()
+            {
+                Linear = 0.01f,
+                Angular = 0.05f
+            });
         }
 
         entityArray.Dispose();
 
+    }
+
+    BlobAssetReference<Collider> MeshToCollider(Mesh mesh)
+    {
+        var vertices = new NativeList<float3>(mesh.vertexCount, Allocator.Temp);
+        var triangles = new NativeList<int3>(mesh.triangles.Length / 3, Allocator.Temp);
+        for(int i = 0; i < mesh.vertexCount; i++)
+        {
+            vertices.Add((float3)mesh.vertices[i]);
+        }
+
+        for (int i = 0; i < mesh.triangles.Length; i += 3)
+        {
+            triangles.Add(new int3(mesh.triangles[i], mesh.triangles[i + 1], mesh.triangles[i + 2]));
+        }
+
+        return MeshCollider.Create(vertices, triangles);
     }
 }
