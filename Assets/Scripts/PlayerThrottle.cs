@@ -14,20 +14,14 @@ public class PlayerThrottle
         this.handler = handler;
     }
 
-    public Vector3 Apply(Vector3 forward)
+    public float Apply()
     {
         if (handler != null)
         {
-            if (handler.Move.y > 0)
-            {
-                velocity += forward * (handler.Move.y * acceleration * Time.deltaTime);
-            }
-            else
-            {
-                velocity *= drag; // ( drag * Time.deltaTime);
-            }
+            return handler.Move.y * acceleration * Time.deltaTime;
         }
-        return velocity ;
+
+        return 0;
     }
 }
 
