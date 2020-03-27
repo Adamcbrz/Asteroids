@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Generic Pooling Class
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class ItemPool<T> where T : MonoBehaviour
 {
     private Queue<T> items = new Queue<T>();

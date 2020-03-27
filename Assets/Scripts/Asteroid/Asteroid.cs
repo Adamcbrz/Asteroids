@@ -7,12 +7,8 @@ public class AstroidEvent : UnityEvent<Asteroid> {};
 public class Asteroid : MonoBehaviour, IDamageable
 {
 
-    [NonSerialized] public AstroidEvent onDestroyed = new AstroidEvent();
-    [SerializeField] private Transform artwork;
-    [SerializeField] private Range velocityRange = new Range { min = 0.5f, max = 1.5f };
-    private new Collider2D collider;
-    private new Rigidbody2D rigidbody2D;
-    private Vector2 velocity;
+    #region Enums
+
     public enum AsteroidType
     {
         Large,
@@ -20,9 +16,36 @@ public class Asteroid : MonoBehaviour, IDamageable
         Small
     }
 
+    #endregion
+
+    #region Events
+    
+    [NonSerialized] public AstroidEvent onDestroyed = new AstroidEvent();
+    
+    #endregion
+
+    #region Unity Exposed Variables
+    
+    [SerializeField] private Transform artwork;
+    [SerializeField] private Range velocityRange = new Range { min = 0.5f, max = 1.5f };
+    
+    #endregion
+
+    #region Private Variables
+    
+    private new Collider2D collider;
+    private new Rigidbody2D rigidbody2D;
+    private Vector2 velocity;
+
+    #endregion
+
+    #region Properties
 
     public AsteroidType asteroidType { get; protected set; }
 
+    #endregion
+
+    #region Unity Lifecycle
 
     void Awake()
     {
@@ -34,7 +57,24 @@ public class Asteroid : MonoBehaviour, IDamageable
     {
         rigidbody2D.velocity = velocity;
     }
-    
+
+    void Update()
+    {
+        transform.localRotation *= Quaternion.Euler(velocity);
+        transform.position = EuclideanTorus.current.Wrap(transform.position, collider.bounds.extents.x);
+    }
+
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        rigidbody2D.velocity = Vector3.Reflect(rigidbody2D.velocity, collision.contacts[0].normal) * 1.25f;
+    }
+
+    #endregion
+
+    #region Public Methods
+
     public void SetType(AsteroidType type)
     {
         asteroidType = type;
@@ -59,17 +99,6 @@ public class Asteroid : MonoBehaviour, IDamageable
         onDestroyed.Invoke(this);    
     }
 
-    void Update()
-    {
-        transform.localRotation *= Quaternion.Euler(velocity);
-        transform.position = EuclideanTorus.current.Wrap(transform.position, collider.bounds.extents.x);
-    }
-
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-        rigidbody2D.velocity = Vector3.Reflect(rigidbody2D.velocity, collision.contacts[0].normal) * 1.25f;
-    }
+    #endregion
 
 }

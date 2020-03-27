@@ -639,16 +639,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 734561872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_MoveAction: {fileID: 3710738434707379630, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_SubmitAction: {fileID: 2064916234097673511, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_CancelAction: {fileID: -1967631576421560919, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_LeftClickAction: {fileID: 8056856818456041789, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_RightClickAction: {fileID: 3837173908680883260, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: 482f702dbef081644b859a2f5378db08,
+    type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &734561874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,7 +710,7 @@ GameObject:
   - component: {fileID: 744198325}
   - component: {fileID: 744198324}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Backdrop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -938,7 +957,7 @@ GameObject:
   - component: {fileID: 1242312370}
   - component: {fileID: 1242312369}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1136,6 +1155,17 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

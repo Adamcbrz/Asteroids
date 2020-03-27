@@ -5,15 +5,26 @@ using UnityEngine;
 
 public class AsteroidManager : MonoBehaviour
 {
+
+    #region Unity Exposed Variables
+
     [SerializeField] private GameObject asteroidPrefab;
     [SerializeField] private int preAllocatedAstroids = 10;
     [SerializeField] private GameObject asteroidParticlePrefab;
-
     [SerializeField] private Range spawnRange = new Range { min = 10, max = 30 };
+
+    #endregion
+
+    #region Private Variables
 
     private ItemPool<Asteroid> asteroidPool;
     private ItemPool<AsteroidParticle> particlePool;
     private int activeAsteroidCount = 0;
+
+    #endregion
+
+    #region Unity Lifecycle
+
     void Start()
     {
         asteroidPool = new ItemPool<Asteroid>(asteroidPrefab, preAllocatedAstroids);
@@ -21,10 +32,10 @@ public class AsteroidManager : MonoBehaviour
         
     }
 
-    Vector3 RandomPointInCircle()
-    {
-        return Quaternion.Euler(0, 0, UnityEngine.Random.Range(-180f, 180f)) * (Vector3.up * spawnRange.Random());
-    }
+    #endregion
+
+    #region Public Methods
+
     public void CreateAstroids(int number)
     {
         for (int i = 0; i < number; i++)
@@ -35,6 +46,15 @@ public class AsteroidManager : MonoBehaviour
             asteroid.transform.position = EuclideanTorus.current.Wrap(RandomPointInCircle());
             asteroid.gameObject.SetActive(true);
         }
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    Vector3 RandomPointInCircle()
+    {
+        return Quaternion.Euler(0, 0, UnityEngine.Random.Range(-180f, 180f)) * (Vector3.up * spawnRange.Random());
     }
 
     void CreateSmallAsteroidGroup(Vector3 position)
@@ -49,7 +69,7 @@ public class AsteroidManager : MonoBehaviour
         }
     }
 
-    private void OnAsteroidDestroyed(Asteroid asteroid)
+    void OnAsteroidDestroyed(Asteroid asteroid)
     {
         asteroid.onDestroyed.RemoveListener(OnAsteroidDestroyed);
         AsteroidParticle particle = particlePool.Borrow();
@@ -62,9 +82,11 @@ public class AsteroidManager : MonoBehaviour
         asteroidPool.Return(asteroid);
     }
 
-    private void OnParticleDisposed(AsteroidParticle particle)
+    void OnParticleDisposed(AsteroidParticle particle)
     {
         particle.onDisposed.RemoveListener(OnParticleDisposed);
         particlePool.Return(particle);
     }
+
+    #endregion
 }
